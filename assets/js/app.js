@@ -303,22 +303,26 @@ function applyCraft() {
     el('p', { text: c.body }),
   ])));
 }
-function wireSwitcher() {
-  const sw = $('#heroSwitch'); if (!sw) return;
-  const btns = $$('.hero-switch__btn', sw);
-  let saved = 'croissant'; try { saved = localStorage.getItem('pnc_hero_shape') || 'croissant'; } catch (e) {}
-  if (!btns.some((b) => b.dataset.shape === saved)) saved = 'croissant';   // ignore stale persisted shapes
-  const setOn = (shape) => btns.forEach((b) => { const on = b.dataset.shape === shape; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
-  setOn(saved);
-  btns.forEach((b) => b.addEventListener('click', () => {
-    const shape = b.dataset.shape; setOn(shape);
-    if (window.__setHeroPastry) window.__setHeroPastry(shape);
-    else { try { localStorage.setItem('pnc_hero_shape', shape); } catch (e) {} }
-  }));
+/* light / warm-dark theme toggle — flips the page tokens AND the 3D backdrop wash together */
+function wireTheme() {
+  const btn = $('#themeToggle'), root = document.documentElement;
+  let mode = 'light'; try { mode = localStorage.getItem('pnc_bg') === 'dark' ? 'dark' : 'light'; } catch (e) {}
+  const apply = (m, persist) => {
+    mode = m === 'dark' ? 'dark' : 'light';
+    root.dataset.bg = mode;
+    if (btn) {
+      btn.setAttribute('aria-pressed', mode === 'dark' ? 'true' : 'false');
+      btn.setAttribute('aria-label', mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    if (window.__setHeroTheme) window.__setHeroTheme(mode);   // sync the 3D backdrop (once the hero is up)
+    if (persist) { try { localStorage.setItem('pnc_bg', mode); } catch (e) {} }
+  };
+  apply(mode, false);   // reconcile button + page with the persisted choice on load
+  if (btn) btn.addEventListener('click', () => apply(mode === 'dark' ? 'light' : 'dark', true));
 }
 
 function boot() {
-  try { applyBrand(); applyStory(); applyCraft(); applyMenu(); applyGallery(); applySocial(); applyOrder(); applyVisit(); applyFooter(); wireNav(); wireSwitcher(); wireScroll(); }
+  try { applyBrand(); applyStory(); applyCraft(); applyMenu(); applyGallery(); applySocial(); applyOrder(); applyVisit(); applyFooter(); wireNav(); wireTheme(); wireScroll(); }
   catch (err) { console.warn('Plume & Crumb: content render issue', err); }
   // the 3D hero is purely decorative; if it can't run, the static image shows.
   try { initHero(); } catch (err) { console.warn('Plume & Crumb: 3D hero unavailable, using static fallback', err); document.querySelector('.backdrop').classList.add('is-static'); }

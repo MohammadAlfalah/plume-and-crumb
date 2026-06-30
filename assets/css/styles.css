@@ -303,6 +303,54 @@ body.nav-open { overflow: hidden; }
 .menu-card.is-featured .menu-badge { background: var(--berry); }
 .price.price-request { font-family: var(--sans); font-size: .72rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--crust-deep); }
 
+/* ============================ Theme toggle (light / warm-dark) ============================ */
+.topbar-actions { display: flex; align-items: center; gap: clamp(12px, 2.4vw, 20px); }
+.theme-toggle {
+  width: 40px; height: 40px; flex: 0 0 auto; border-radius: 50%; cursor: pointer; padding: 0;
+  display: grid; place-items: center; color: var(--espresso);
+  border: 1.5px solid color-mix(in srgb, var(--crust) 42%, transparent);
+  background: color-mix(in srgb, var(--parchment) 64%, transparent);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  transition: background .25s, border-color .25s, transform .2s, color .25s;
+}
+.theme-toggle:hover { transform: translateY(-1px); border-color: var(--crust); }
+.theme-toggle:focus-visible { outline: 3px solid var(--crust-deep); outline-offset: 2px; }
+.theme-toggle__icon {
+  width: 15px; height: 15px; border-radius: 50%; background: currentColor;   /* crescent moon (light mode) */
+  -webkit-mask: radial-gradient(circle at 70% 30%, transparent 0 55%, #000 56%);
+          mask: radial-gradient(circle at 70% 30%, transparent 0 55%, #000 56%);
+  transition: -webkit-mask .35s var(--ease), mask .35s var(--ease);
+}
+
+/* ============================ Warm-dark "night kitchen" theme ============================ */
+html[data-bg="dark"] {
+  --cream: #241710;          /* page ground */
+  --bloom: #FBEFDD;          /* light token: text-on-dark + light chips (stays light) */
+  --parchment: #34251A;      /* frosted card surface */
+  --key-tint: #5A3C20;       /* warm fill (was a light highlight) */
+  --crust: #E7A559;          /* accents lifted for legibility on dark */
+  --crust-deep: #E0954A;
+  --berry: #D85565;
+  --berry-deep: #C2475A;
+  --espresso: #F3E7D6;       /* now the primary light ink / icon color */
+  --espresso-dark: #18100A;  /* deepest panel: footer / social / lightbox */
+  --ink: #F3E7D6;
+  --shadow: 0 18px 50px -20px rgba(0, 0, 0, .62);
+  --shadow-soft: 0 10px 30px -18px rgba(0, 0, 0, .55);
+}
+html[data-bg="dark"] body { background: var(--cream); }
+html[data-bg="dark"] .backdrop { background: radial-gradient(120% 100% at 70% 30%, #5A3C20 0%, #3D2814 40%, #241710 130%); }
+html[data-bg="dark"] .theme-toggle__icon { -webkit-mask: none; mask: none; }   /* crescent → full sun disc */
+/* keep the few "dark element on a light surface" cases dark now that --espresso flipped light */
+html[data-bg="dark"] .skip-link { background: var(--espresso-dark); }
+html[data-bg="dark"] .social-facade .play,
+html[data-bg="dark"] .social-follow .btn { color: var(--espresso-dark); }
+/* form fields read as warm dark wells, not white boxes */
+html[data-bg="dark"] .field input,
+html[data-bg="dark"] .field select,
+html[data-bg="dark"] .field textarea { background: color-mix(in srgb, var(--parchment) 70%, #000); border-color: color-mix(in srgb, var(--crust) 34%, transparent); }
+html[data-bg="dark"] .map-facade { background: linear-gradient(135deg, #3D2814, #241710); color: var(--crust); }
+
 /* ============================ Reduced motion ============================ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

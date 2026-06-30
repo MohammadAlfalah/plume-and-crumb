@@ -286,7 +286,21 @@ export async function initHero() {
   const key = new THREE.DirectionalLight(0xFFE7BC, 2.25); key.position.set(4, 6, 5); scene.add(key);
   const fill = new THREE.DirectionalLight(0xFFF1DD, 0.9); fill.position.set(-5, 1, -3); scene.add(fill);
 
-  scene.background = washTexture(THREE, ['#F8EACB', '#EFDBB2', '#D98E3F']);
+  // theme-aware backdrop wash (the bloom compositor makes the canvas opaque, so the CSS
+  // gradient can't show through — this paints it into the scene). Light, or night-kitchen.
+  const WASH = {
+    light: washTexture(THREE, ['#F8EACB', '#EFDBB2', '#D98E3F']),
+    dark:  washTexture(THREE, ['#5A3C20', '#3D2814', '#241710']),
+  };
+  let heroTheme = 'light';
+  try { const sv = localStorage.getItem('pnc_bg'); if (sv === 'dark' || sv === 'light') heroTheme = sv; } catch (e) {}
+  scene.background = WASH[heroTheme];
+  window.__setHeroTheme = (mode) => {
+    heroTheme = (mode === 'dark') ? 'dark' : 'light';
+    scene.background = WASH[heroTheme];
+    if (bloom) bloom.threshold = heroTheme === 'dark' ? 0.78 : 0.9;
+    render();
+  };
 
   // ---- soft contact shadow (grounding) ----
   const shadow = new THREE.Mesh(
@@ -314,14 +328,11 @@ export async function initHero() {
 
   // three REAL photoscanned models (Poly Haven, CC0): a croissant + two cakes the shop sells
   const MODELS = {
-    croissant: { path: 'assets/models/croissant/croissant_1k.gltf', scale: 3.3, tilt: [-0.28, 0.5, 0.06] },
-    choc:      { path: 'assets/models/strawberry_chocolate_cake/strawberry_chocolate_cake_1k.gltf', scale: 3.1, tilt: [-0.16, 0.45, 0] },
-    carrot:    { path: 'assets/models/carrot_cake/carrot_cake_1k.gltf', scale: 3.1, tilt: [-0.16, 0.45, 0] },
+    carrot: { path: 'assets/models/carrot_cake/carrot_cake_1k.gltf', scale: 3.1, tilt: [-0.16, 0.45, 0] },
   };
   const loaded = {};
-  let current = 'croissant';
-  try { const sv = localStorage.getItem('pnc_hero_shape'); if (sv && MODELS[sv]) current = sv; } catch (e) {}
-  function showOnly(obj) { activeObj = obj; mesh.visible = (obj === mesh); for (const k in loaded) loaded[k].visible = (loaded[k] === obj); }
+  let current = 'carrot';
+  function showOnly(obj) { activeObj = obj || mesh; mesh.visible = (obj === mesh); for (const k in loaded) loaded[k].visible = (loaded[k] === obj); }
   let GLTFLoaderP = null;
   function loadModel(key, then) {
     if (loaded[key]) return then(loaded[key]);
@@ -343,10 +354,9 @@ export async function initHero() {
     }).catch(() => then(null));
   }
   function setShape(key) {
-    current = MODELS[key] ? key : 'croissant';
-    try { localStorage.setItem('pnc_hero_shape', current); } catch (e) {}
+    current = MODELS[key] ? key : 'carrot';
     if (loaded[current]) { showOnly(loaded[current]); render(); return; }
-    showOnly(mesh);   // procedural placeholder while the model streams in
+    showOnly(null);   // just the warm wash + motes while the model streams in
     loadModel(current, (g) => { if (g && current === key) { showOnly(g); render(); } });
   }
   window.__setHeroPastry = setShape;
@@ -389,7 +399,7 @@ export async function initHero() {
   if (!reduced && !saveData && !mobile) {
     composer = new EffectComposer(renderer); composer.setPixelRatio(Math.min(dpr, 2)); composer.setSize(W(), H());
     composer.addPass(new RenderPass(scene, camera));
-    bloom = new UnrealBloomPass(new THREE.Vector2(W(), H()), 0.26, 0.5, 0.9); composer.addPass(bloom);   // softer, higher threshold
+    bloom = new UnrealBloomPass(new THREE.Vector2(W(), H()), 0.26, 0.5, heroTheme === 'dark' ? 0.78 : 0.9); composer.addPass(bloom);
     composer.addPass(new OutputPass());
   }
   const render = () => (composer ? composer.render() : renderer.render(scene, camera));
