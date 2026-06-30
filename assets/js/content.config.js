@@ -112,8 +112,10 @@ window.PNC = {
     // Leave empty ("") and the form will open the visitor's email app to send you the details instead.
     endpoint: "",
     email: "hello@plumeandcrumb.example",
+    products: ["Cake", "Tart or dessert", "Pastry box / assortment", "Croissants & viennoiserie", "Wedding / event", "Other"],
     occasions: ["Birthday", "Wedding", "Anniversary", "Celebration", "Corporate", "Just because", "Other"],
     budgets: ["Under $50", "$50–$100", "$100–$250", "$250–$500", "$500+", "Not sure yet"],
+    contactMethods: ["Email", "Phone call", "Text message"],
   },
 
   visit: {

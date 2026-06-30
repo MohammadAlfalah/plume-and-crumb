@@ -161,52 +161,74 @@
           <!-- honeypot: hidden from people, catches bots -->
           <div class="hp" aria-hidden="true"><label>Leave this empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label></div>
 
-          <div class="field">
-            <label for="f-name">Your name <span class="req">*</span></label>
-            <input id="f-name" name="name" type="text" required autocomplete="name" />
-          </div>
-          <div class="row">
-            <div class="field">
-              <label for="f-email">Email <span class="req">*</span></label>
-              <input id="f-email" name="email" type="email" required autocomplete="email" />
+          <fieldset class="form-group">
+            <legend>What you're after</legend>
+            <p class="form-group-hint">Everything is made to order — we'll reply with options and pricing.</p>
+            <div class="row">
+              <div class="field">
+                <label for="f-product">Type of order</label>
+                <select id="f-product" name="product"><option value="">Choose…</option></select>
+              </div>
+              <div class="field">
+                <label for="f-occasion">Occasion</label>
+                <select id="f-occasion" name="occasion"><option value="">Choose…</option></select>
+              </div>
             </div>
-            <div class="field">
-              <label for="f-phone">Phone</label>
-              <input id="f-phone" name="phone" type="tel" autocomplete="tel" />
-            </div>
-          </div>
-          <div class="row">
-            <div class="field">
-              <label for="f-occasion">Occasion</label>
-              <select id="f-occasion" name="occasion"><option value="">Choose…</option></select>
-            </div>
-            <div class="field">
-              <label for="f-date">Date wanted</label>
-              <input id="f-date" name="date" type="date" />
-            </div>
-          </div>
-          <div class="row">
-            <div class="field">
-              <label for="f-servings">Servings / size</label>
-              <input id="f-servings" name="servings" type="text" placeholder="e.g. serves 12, or 2 dozen" />
+            <div class="row">
+              <div class="field">
+                <label for="f-date">Date wanted</label>
+                <input id="f-date" name="date" type="date" aria-describedby="hint-date" />
+                <span class="field-hint" id="hint-date">Custom cakes need about 72 hours' notice.</span>
+              </div>
+              <div class="field">
+                <label for="f-servings">Servings / size</label>
+                <input id="f-servings" name="servings" type="text" placeholder="e.g. serves 12, or 2 dozen" />
+              </div>
             </div>
             <div class="field">
               <label for="f-budget">Budget range</label>
               <select id="f-budget" name="budget"><option value="">Choose…</option></select>
             </div>
-          </div>
-          <div class="field">
-            <label for="f-flavors">Flavors / style</label>
-            <input id="f-flavors" name="flavors" type="text" placeholder="e.g. pistachio &amp; raspberry, not too sweet" />
-          </div>
-          <div class="field">
-            <label for="f-dietary">Dietary notes</label>
-            <input id="f-dietary" name="dietary" type="text" placeholder="allergies, vegan, gluten-free…" />
-          </div>
-          <div class="field">
-            <label for="f-message">Anything else?</label>
-            <textarea id="f-message" name="message" rows="4"></textarea>
-          </div>
+          </fieldset>
+
+          <fieldset class="form-group">
+            <legend>The details</legend>
+            <div class="field">
+              <label for="f-flavors">Flavors / style</label>
+              <input id="f-flavors" name="flavors" type="text" placeholder="e.g. pistachio &amp; raspberry, not too sweet" />
+            </div>
+            <div class="field">
+              <label for="f-dietary">Dietary notes</label>
+              <input id="f-dietary" name="dietary" type="text" placeholder="allergies, vegan, gluten-free…" />
+            </div>
+            <div class="field">
+              <label for="f-message">Anything else?</label>
+              <textarea id="f-message" name="message" rows="4"></textarea>
+            </div>
+          </fieldset>
+
+          <fieldset class="form-group">
+            <legend>Where to reach you</legend>
+            <p class="form-group-hint">Only used to talk about your order — never shared.</p>
+            <div class="field">
+              <label for="f-name">Your name <span class="req">*</span></label>
+              <input id="f-name" name="name" type="text" required autocomplete="name" />
+            </div>
+            <div class="row">
+              <div class="field">
+                <label for="f-email">Email <span class="req">*</span></label>
+                <input id="f-email" name="email" type="email" required autocomplete="email" />
+              </div>
+              <div class="field">
+                <label for="f-phone">Phone</label>
+                <input id="f-phone" name="phone" type="tel" autocomplete="tel" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="f-contact">Preferred contact</label>
+              <select id="f-contact" name="preferred_contact"><option value="">Choose…</option></select>
+            </div>
+          </fieldset>
 
           <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
           <button class="btn btn-primary btn-block" type="submit" id="formSubmit">Send request</button>

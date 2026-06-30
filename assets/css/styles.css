@@ -235,6 +235,11 @@ body.nav-open { overflow: hidden; }
 .form-status.ok { color: #2f7d4f; }
 .form-status.err { color: var(--berry); }
 .form-fineprint { text-align: center; font-size: .82rem; color: color-mix(in srgb, var(--ink) 74%, transparent); margin: 12px 0 0; }
+.order-form fieldset.form-group { border: 0; min-width: 0; margin: 0; padding: 0; }
+.order-form .form-group + .form-group { margin-top: clamp(20px, 3vw, 30px); padding-top: clamp(20px, 3vw, 30px); border-top: 1px solid color-mix(in srgb, var(--crust) 18%, transparent); }
+.order-form legend { font-family: var(--serif); font-size: 1.18rem; font-weight: 600; color: var(--espresso); padding: 0; }
+.order-form .form-group-hint { margin: 3px 0 16px; font-size: .88rem; color: color-mix(in srgb, var(--ink) 64%, transparent); }
+.field-hint { display: block; margin-top: 5px; font-size: .8rem; color: color-mix(in srgb, var(--ink) 60%, transparent); }
 @media (max-width: 540px) { .order-form .row { grid-template-columns: 1fr; } }
 
 /* ============================ Visit ============================ */

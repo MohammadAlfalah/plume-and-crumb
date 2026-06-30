@@ -166,9 +166,13 @@ function applyOrder() {
   const o = C.order || {};
   if (o.heading) $('#order-title').textContent = o.heading;
   if (o.blurb) $('#orderBlurb').textContent = o.blurb;
-  const occ = $('#f-occasion'), bud = $('#f-budget');
+  const occ = $('#f-occasion'), bud = $('#f-budget'), prod = $('#f-product'), contact = $('#f-contact');
   (o.occasions || []).forEach((v) => occ.append(el('option', { value: v, text: v })));
   (o.budgets || []).forEach((v) => bud.append(el('option', { value: v, text: v })));
+  const products = o.products || ['Cake', 'Tart or dessert', 'Pastry box / assortment', 'Croissants & viennoiserie', 'Wedding / event', 'Other'];
+  const contacts = o.contactMethods || ['Email', 'Phone call', 'Text message'];
+  if (prod) products.forEach((v) => prod.append(el('option', { value: v, text: v })));
+  if (contact) contacts.forEach((v) => contact.append(el('option', { value: v, text: v })));
   const form = $('#orderForm');
   // keep the native (no-JS) submit target in sync with the config
   if (o.endpoint) { form.setAttribute('action', o.endpoint); form.setAttribute('enctype', 'application/x-www-form-urlencoded'); }
