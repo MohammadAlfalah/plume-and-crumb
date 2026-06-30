@@ -50,6 +50,7 @@ function applyBrand() {
   const h = C.hero || {};
   if (h.cta) { const cta = $('#heroCta'); cta.textContent = h.cta.label || cta.textContent; cta.href = h.cta.href || '#order'; }
   if (h.caption) $('#heroCaption').textContent = h.caption;
+  if (window.matchMedia('(pointer: coarse)').matches) $('#heroCaption').textContent = 'scroll to explore'; // no drag-orbit on touch
   if (h.fallbackImage) $('#heroFallback').src = h.fallbackImage;
 }
 
@@ -138,7 +139,7 @@ function applySocial() {
   if (ig.url) { $('#footIg').href = ig.url; } else $('#footIg').remove();
   if (tt.url) { $('#footTt').href = tt.url; } else $('#footTt').remove();
   const sec = $('#social');
-  if (!s.enabled) { sec.remove(); $$('.dotnav a[href="#social"]').forEach((n) => n.remove()); return; }
+  if (!s.enabled) { sec.remove(); $$('.dotnav a[href="#social"], #navMenu a[data-social]').forEach((n) => n.remove()); return; }
   sec.hidden = false;
   if (s.heading) $('#social-title').textContent = s.heading;
   if (s.blurb) $('#socialBlurb').textContent = s.blurb;
@@ -279,8 +280,20 @@ function wireScroll() {
 }
 
 /* ---------- boot ---------- */
+/* ---------- mobile dropdown menu ---------- */
+function wireNav() {
+  const toggle = $('#navToggle'), menu = $('#navMenu');
+  if (!toggle || !menu) return;
+  const close = () => { menu.hidden = true; toggle.setAttribute('aria-expanded', 'false'); document.body.classList.remove('nav-open'); };
+  const open = () => { menu.hidden = false; toggle.setAttribute('aria-expanded', 'true'); document.body.classList.add('nav-open'); const f = menu.querySelector('a'); if (f) f.focus(); };
+  toggle.addEventListener('click', () => (menu.hidden ? open() : close()));
+  menu.addEventListener('click', (e) => { if (e.target.closest('a')) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { close(); toggle.focus(); } });
+  document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target) && !toggle.contains(e.target)) close(); });
+}
+
 function boot() {
-  try { applyBrand(); applyStory(); applyMenu(); applyGallery(); applySocial(); applyOrder(); applyVisit(); applyFooter(); wireScroll(); }
+  try { applyBrand(); applyStory(); applyMenu(); applyGallery(); applySocial(); applyOrder(); applyVisit(); applyFooter(); wireNav(); wireScroll(); }
   catch (err) { console.warn('Plume & Crumb: content render issue', err); }
   // the 3D hero is purely decorative; if it can't run, the static image shows.
   try { initHero(); } catch (err) { console.warn('Plume & Crumb: 3D hero unavailable, using static fallback', err); document.querySelector('.backdrop').classList.add('is-static'); }

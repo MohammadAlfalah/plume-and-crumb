@@ -101,7 +101,7 @@ export function initHero() {
   } catch { backdrop.classList.add('is-static'); return false; }
 
   const W = () => window.innerWidth, H = () => window.innerHeight;
-  let dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.6 : 2.5);   // crisp on desktop
+  let dpr = Math.min(window.devicePixelRatio || 1, mobile ? 2 : 2.5);   // crisp on phones too
   renderer.setPixelRatio(dpr);
   renderer.setSize(W(), H());
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -123,7 +123,7 @@ export function initHero() {
 
   // ---- the pastry: PBR + baked colour + crust roughness ----
   const pastry = new THREE.Group(); scene.add(pastry);
-  const detail = reduced ? 5 : (mobile ? 5 : 6);
+  const detail = reduced ? 5 : 6;   // full detail on phones too (smooth normals; FPS sampler protects low-end)
   const mat = new THREE.MeshPhysicalMaterial({
     vertexColors: true, roughness: 0.52, metalness: 0.0,
     roughnessMap: crustRoughness(THREE),
