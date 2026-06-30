@@ -307,6 +307,7 @@ function wireSwitcher() {
   const sw = $('#heroSwitch'); if (!sw) return;
   const btns = $$('.hero-switch__btn', sw);
   let saved = 'croissant'; try { saved = localStorage.getItem('pnc_hero_shape') || 'croissant'; } catch (e) {}
+  if (!btns.some((b) => b.dataset.shape === saved)) saved = 'croissant';   // ignore stale persisted shapes
   const setOn = (shape) => btns.forEach((b) => { const on = b.dataset.shape === shape; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
   setOn(saved);
   btns.forEach((b) => b.addEventListener('click', () => {

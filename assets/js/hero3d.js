@@ -307,28 +307,48 @@ export async function initHero() {
     emissive: new THREE.Color(0x3A1F0C), emissiveIntensity: 0.05,
     envMapIntensity: 1.1,
   });
-  const SHAPES = {
-    croissant: { geo: () => buildCroissant(THREE, lowQ), tilt: [-0.34, 0.20, 0.08] },
-    bundt:     { geo: () => buildBundt(THREE, lowQ),     tilt: [-0.66, 0.0, 0.0] },
-    bun:       { geo: () => buildBun(THREE, lowQ),       tilt: [-0.78, 0.0, 0.0] },
+  // placeholder procedural croissant — shows for the instant before the real model streams in
+  const mesh = new THREE.Mesh(organicWarp(THREE, buildCroissant(THREE, lowQ)), mat);
+  mesh.rotation.set(-0.34, 0.20, 0.08); pastry.add(mesh);
+  let activeObj = mesh;
+
+  // three REAL photoscanned models (Poly Haven, CC0): a croissant + two cakes the shop sells
+  const MODELS = {
+    croissant: { path: 'assets/models/croissant/croissant_1k.gltf', scale: 3.3, tilt: [-0.28, 0.5, 0.06] },
+    choc:      { path: 'assets/models/strawberry_chocolate_cake/strawberry_chocolate_cake_1k.gltf', scale: 3.1, tilt: [-0.16, 0.45, 0] },
+    carrot:    { path: 'assets/models/carrot_cake/carrot_cake_1k.gltf', scale: 3.1, tilt: [-0.16, 0.45, 0] },
   };
-  const mesh = new THREE.Mesh(SHAPES.croissant.geo(), mat); pastry.add(mesh);
-  let croissantModel = null;   // real photoscanned croissant (Poly Haven, CC0), lazy-loaded below
-  function setShape(name) {
-    window.__heroShape = SHAPES[name] ? name : 'croissant';
-    try { localStorage.setItem('pnc_hero_shape', window.__heroShape); } catch (e) {}
-    if (window.__heroShape === 'croissant' && croissantModel) {
-      croissantModel.visible = true; mesh.visible = false; return;   // show the real model
-    }
-    if (croissantModel) croissantModel.visible = false;
-    mesh.visible = true;
-    const s = SHAPES[name] || SHAPES.croissant;
-    const prev = mesh.geometry; mesh.geometry = organicWarp(THREE, s.geo()); if (prev) prev.dispose();
-    mesh.rotation.set(s.tilt[0], s.tilt[1], s.tilt[2]);
+  const loaded = {};
+  let current = 'croissant';
+  try { const sv = localStorage.getItem('pnc_hero_shape'); if (sv && MODELS[sv]) current = sv; } catch (e) {}
+  function showOnly(obj) { activeObj = obj; mesh.visible = (obj === mesh); for (const k in loaded) loaded[k].visible = (loaded[k] === obj); }
+  let GLTFLoaderP = null;
+  function loadModel(key, then) {
+    if (loaded[key]) return then(loaded[key]);
+    if (saveData) return then(null);   // honor data-saver: stay on the procedural placeholder
+    GLTFLoaderP = GLTFLoaderP || import('three/addons/loaders/GLTFLoader.js');
+    GLTFLoaderP.then(({ GLTFLoader }) => {
+      const cfg = MODELS[key];
+      new GLTFLoader().load(cfg.path, (gltf) => {
+        const m = gltf.scene;
+        let box = new THREE.Box3().setFromObject(m);
+        const sz = box.getSize(new THREE.Vector3()), maxDim = Math.max(sz.x, sz.y, sz.z) || 1;
+        m.scale.setScalar(cfg.scale / maxDim);
+        box = new THREE.Box3().setFromObject(m);
+        m.position.sub(box.getCenter(new THREE.Vector3()));   // center on origin
+        m.traverse((o) => { if (o.isMesh && o.material) o.material.envMapIntensity = 1.0; });
+        const g = new THREE.Group(); g.add(m); g.rotation.set(cfg.tilt[0], cfg.tilt[1], cfg.tilt[2]);
+        g.visible = false; pastry.add(g); loaded[key] = g; then(g);
+      }, undefined, () => then(null));
+    }).catch(() => then(null));
   }
-  let _init = 'croissant';
-  try { const sv = localStorage.getItem('pnc_hero_shape'); if (sv && SHAPES[sv]) _init = sv; } catch (e) {}
-  setShape(_init);
+  function setShape(key) {
+    current = MODELS[key] ? key : 'croissant';
+    try { localStorage.setItem('pnc_hero_shape', current); } catch (e) {}
+    if (loaded[current]) { showOnly(loaded[current]); render(); return; }
+    showOnly(mesh);   // procedural placeholder while the model streams in
+    loadModel(current, (g) => { if (g && current === key) { showOnly(g); render(); } });
+  }
   window.__setHeroPastry = setShape;
 
   // ---- light beams (fake volumetrics; glow under bloom) ----
@@ -418,7 +438,7 @@ export async function initHero() {
     pastry.position.y = lift - p * 0.4;
     pastry.scale.setScalar(1 - p * 0.45);
     pastry.rotation.z = p * 0.28;
-    (croissantModel && croissantModel.visible ? croissantModel : mesh).rotation.y += dt * 0.06;  // gentle turn
+    activeObj.rotation.y += dt * 0.06;  // gentle turn on whichever pastry is showing
     key.color.copy(keyBase).lerp(keyGold, warm);
     mat.emissiveIntensity = 0.05 + warm * 0.06;
     mat.envMapIntensity = 1.1 + warm * 0.2;
@@ -449,26 +469,7 @@ export async function initHero() {
 
   if (reduced) { mesh.rotation.x -= 0.05; render(); } else loop();
 
-  // ---- real photoscanned croissant (Poly Haven, CC0), lazy-loaded after first paint ----
-  const modelPath = (window.PNC && window.PNC.hero && window.PNC.hero.model) || 'assets/models/croissant/croissant_1k.gltf';
-  if (!saveData) {
-    import('three/addons/loaders/GLTFLoader.js').then(({ GLTFLoader }) => {
-      new GLTFLoader().load(modelPath, (gltf) => {
-        const m = gltf.scene;
-        let box = new THREE.Box3().setFromObject(m);
-        const size = box.getSize(new THREE.Vector3()), maxDim = Math.max(size.x, size.y, size.z) || 1;
-        m.scale.setScalar(3.3 / maxDim);
-        box = new THREE.Box3().setFromObject(m);
-        m.position.sub(box.getCenter(new THREE.Vector3()));   // center on origin
-        m.traverse((o) => { if (o.isMesh && o.material) o.material.envMapIntensity = 1.0; });
-        croissantModel = new THREE.Group(); croissantModel.add(m);
-        croissantModel.rotation.set(-0.28, 0.5, 0.06);        // 3/4 float angle
-        pastry.add(croissantModel);
-        const isCroissant = (window.__heroShape || 'croissant') === 'croissant';
-        croissantModel.visible = isCroissant; if (isCroissant) mesh.visible = false;
-        render();   // ensure it shows even if the loop is paused (reduced-motion / hidden tab)
-      }, undefined, () => { /* keep the procedural croissant on any load error */ });
-    }).catch(() => {});
-  }
+  // load the initial real model (the procedural croissant bridges the gap until it arrives)
+  setShape(current);
   return true;
 }
