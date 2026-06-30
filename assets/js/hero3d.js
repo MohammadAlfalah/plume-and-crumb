@@ -313,12 +313,18 @@ export async function initHero() {
     bun:       { geo: () => buildBun(THREE, lowQ),       tilt: [-0.78, 0.0, 0.0] },
   };
   const mesh = new THREE.Mesh(SHAPES.croissant.geo(), mat); pastry.add(mesh);
+  let croissantModel = null;   // real photoscanned croissant (Poly Haven, CC0), lazy-loaded below
   function setShape(name) {
+    window.__heroShape = SHAPES[name] ? name : 'croissant';
+    try { localStorage.setItem('pnc_hero_shape', window.__heroShape); } catch (e) {}
+    if (window.__heroShape === 'croissant' && croissantModel) {
+      croissantModel.visible = true; mesh.visible = false; return;   // show the real model
+    }
+    if (croissantModel) croissantModel.visible = false;
+    mesh.visible = true;
     const s = SHAPES[name] || SHAPES.croissant;
     const prev = mesh.geometry; mesh.geometry = organicWarp(THREE, s.geo()); if (prev) prev.dispose();
     mesh.rotation.set(s.tilt[0], s.tilt[1], s.tilt[2]);
-    window.__heroShape = SHAPES[name] ? name : 'croissant';
-    try { localStorage.setItem('pnc_hero_shape', window.__heroShape); } catch (e) {}
   }
   let _init = 'croissant';
   try { const sv = localStorage.getItem('pnc_hero_shape'); if (sv && SHAPES[sv]) _init = sv; } catch (e) {}
@@ -412,7 +418,7 @@ export async function initHero() {
     pastry.position.y = lift - p * 0.4;
     pastry.scale.setScalar(1 - p * 0.45);
     pastry.rotation.z = p * 0.28;
-    mesh.rotation.y += dt * 0.06;                              // very gentle turn
+    (croissantModel && croissantModel.visible ? croissantModel : mesh).rotation.y += dt * 0.06;  // gentle turn
     key.color.copy(keyBase).lerp(keyGold, warm);
     mat.emissiveIntensity = 0.05 + warm * 0.06;
     mat.envMapIntensity = 1.1 + warm * 0.2;
@@ -443,10 +449,25 @@ export async function initHero() {
 
   if (reduced) { mesh.rotation.x -= 0.05; render(); } else loop();
 
-  const modelPath = window.PNC && window.PNC.hero && window.PNC.hero.model;
-  if (modelPath && !reduced) {
+  // ---- real photoscanned croissant (Poly Haven, CC0), lazy-loaded after first paint ----
+  const modelPath = (window.PNC && window.PNC.hero && window.PNC.hero.model) || 'assets/models/croissant/croissant_1k.gltf';
+  if (!saveData) {
     import('three/addons/loaders/GLTFLoader.js').then(({ GLTFLoader }) => {
-      new GLTFLoader().load(modelPath, (g) => { mesh.visible = false; g.scene.scale.setScalar(1.5); pastry.add(g.scene); }, undefined, () => {});
+      new GLTFLoader().load(modelPath, (gltf) => {
+        const m = gltf.scene;
+        let box = new THREE.Box3().setFromObject(m);
+        const size = box.getSize(new THREE.Vector3()), maxDim = Math.max(size.x, size.y, size.z) || 1;
+        m.scale.setScalar(3.3 / maxDim);
+        box = new THREE.Box3().setFromObject(m);
+        m.position.sub(box.getCenter(new THREE.Vector3()));   // center on origin
+        m.traverse((o) => { if (o.isMesh && o.material) o.material.envMapIntensity = 1.0; });
+        croissantModel = new THREE.Group(); croissantModel.add(m);
+        croissantModel.rotation.set(-0.28, 0.5, 0.06);        // 3/4 float angle
+        pastry.add(croissantModel);
+        const isCroissant = (window.__heroShape || 'croissant') === 'croissant';
+        croissantModel.visible = isCroissant; if (isCroissant) mesh.visible = false;
+        render();   // ensure it shows even if the loop is paused (reduced-motion / hidden tab)
+      }, undefined, () => { /* keep the procedural croissant on any load error */ });
     }).catch(() => {});
   }
   return true;
