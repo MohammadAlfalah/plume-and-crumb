@@ -271,6 +271,38 @@ body.nav-open { overflow: hidden; }
 .reveal { opacity: 0; transform: translateY(16px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
 .reveal.in { opacity: 1; transform: none; }
 
+/* ============================ Eyebrow on dark ============================ */
+.eyebrow.on-dark { color: color-mix(in srgb, var(--key-tint) 92%, transparent); }
+
+/* ============================ Hero pastry switcher ============================ */
+.hero-switch { display: inline-flex; gap: 4px; margin: 26px auto 0; padding: 5px; border-radius: 999px; pointer-events: auto;
+  background: color-mix(in srgb, var(--parchment) 72%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid color-mix(in srgb, var(--crust) 22%, transparent); box-shadow: var(--shadow-soft); }
+.hero-switch__btn { font-family: var(--sans); font-size: .82rem; font-weight: 600; color: color-mix(in srgb, var(--ink) 62%, transparent);
+  background: transparent; border: 0; padding: 8px 15px; border-radius: 999px; cursor: pointer; transition: color .25s var(--ease), background .25s var(--ease); }
+.hero-switch__btn:hover { color: var(--espresso); }
+.hero-switch__btn.is-on { color: var(--bloom); background: var(--crust-deep); }
+.hero-switch__btn:focus-visible { outline: 3px solid var(--crust-deep); outline-offset: 2px; }
+@media (max-width: 430px) { .hero-switch__btn { padding: 8px 11px; font-size: .75rem; } }
+
+/* ============================ Craft / trust band ============================ */
+.craft { padding-top: clamp(44px, 8vh, 84px); padding-bottom: clamp(44px, 8vh, 84px); }
+.craft-grid { list-style: none; margin: 0 auto; padding: 0; max-width: var(--maxw); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: clamp(20px, 3vw, 40px); text-align: center; }
+.craft-item { padding: 4px 14px; }
+.craft-item .craft-title { font-family: var(--serif); font-size: 1.3rem; font-weight: 600; margin: 0 0 .45em; color: var(--crust-deep); }
+.craft-item p { margin: 0; font-size: .98rem; line-height: 1.55; color: color-mix(in srgb, var(--ink) 80%, transparent); }
+@media (min-width: 720px) { .craft-grid .craft-item + .craft-item { border-left: 1px solid color-mix(in srgb, var(--crust) 18%, transparent); } }
+
+/* ============================ Menu: badges, featured, price ============================ */
+.menu-card { position: relative; }
+.menu-badge { position: absolute; top: -10px; left: 16px; font-family: var(--sans); font-size: .63rem; font-weight: 600; letter-spacing: .13em; text-transform: uppercase;
+  color: var(--bloom); background: var(--crust-deep); padding: 4px 10px; border-radius: 999px; box-shadow: var(--shadow-soft); }
+.menu-card.is-featured { border-color: color-mix(in srgb, var(--crust) 48%, transparent);
+  box-shadow: 0 16px 44px -18px color-mix(in srgb, var(--crust-deep) 55%, transparent);
+  background: color-mix(in srgb, var(--key-tint) 26%, var(--parchment)); }
+.menu-card.is-featured .menu-badge { background: var(--berry); }
+.price.price-request { font-family: var(--sans); font-size: .72rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--crust-deep); }
+
 /* ============================ Reduced motion ============================ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

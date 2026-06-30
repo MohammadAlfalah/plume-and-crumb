@@ -16,14 +16,14 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://mohammadalfalah.github.io/plume-and-crumb/assets/img/hero-fallback.svg" />
 
-  <!-- Favicon: a little plume mark -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FBF4E9'/%3E%3Cpath d='M16 5c5 3 7 8 4 13-1 2-3 4-4 8-1-4-3-6-4-8-3-5-1-10 4-13z' fill='%23D98E3F'/%3E%3Cpath d='M16 9v15' stroke='%23A85F22' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <!-- Favicon: the "plume" brand mark -->
+  <link rel="icon" href="assets/img/favicon.svg" />
+  <link rel="apple-touch-icon" href="assets/img/favicon.svg" />
 
-  <!-- Fonts: Fraunces (display) + Inter (body). Instant fallback via the CSS stack. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-
+  <!-- Self-hosted fonts (Fraunces display + Inter body) — no CDN; CSS stack paints instantly. -->
+  <link rel="preload" href="assets/fonts/inter-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/fraunces-600-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="assets/css/fonts.css" />
   <link rel="stylesheet" href="assets/css/styles.css" />
 
   <!-- Three.js as ES modules, no build step. Pinned version. -->
@@ -84,11 +84,16 @@
       <div class="hero-inner">
         <p class="eyebrow" id="heroDescriptor">Artisan Pastry</p>
         <h1 id="hero-title" class="hero-title">Baked light.<br />Served warm.</h1>
-        <p class="hero-sub" id="heroSub">A small-batch pastry kitchen. Croissants, cakes, and tarts, made by hand.</p>
+        <p class="hero-sub" id="heroSub">Laminated croissants, cakes made to order, and whatever the season gives us — baked by hand, in numbers small enough to get every one right.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" id="heroCta" href="#order">Request a custom cake</a>
           <a class="btn btn-ghost" href="#menu">See the menu</a>
         </div>
+      </div>
+      <div class="hero-switch" id="heroSwitch" role="group" aria-label="Choose the floating pastry">
+        <button type="button" class="hero-switch__btn is-on" data-shape="croissant" aria-pressed="true">Croissant</button>
+        <button type="button" class="hero-switch__btn" data-shape="bundt" aria-pressed="false">Kouign-amann</button>
+        <button type="button" class="hero-switch__btn" data-shape="bun" aria-pressed="false">Morning bun</button>
       </div>
       <p class="hero-caption" id="heroCaption" aria-hidden="true">drag to orbit · scroll to explore</p>
       <a class="scroll-cue" href="#story" aria-label="Scroll to story"><span></span></a>
@@ -98,6 +103,7 @@
     <section id="story" class="story section" aria-labelledby="story-title">
       <div class="story-grid">
         <div class="story-copy reveal">
+          <p class="eyebrow">Our story</p>
           <h2 id="story-title" class="section-title">Made by hand, in small batches</h2>
           <div id="storyBody"></div>
         </div>
@@ -105,9 +111,15 @@
       </div>
     </section>
 
+    <!-- ===== CRAFT / TRUST BAND ===== -->
+    <section id="craft" class="craft section" aria-label="Our craft">
+      <ul class="craft-grid" id="craftGrid"></ul>
+    </section>
+
     <!-- ===== MENU ===== -->
     <section id="menu" class="menu section" aria-labelledby="menu-title">
       <div class="section-head reveal">
+        <p class="eyebrow">Our menu</p>
         <h2 id="menu-title" class="section-title">The case</h2>
         <p class="section-note" id="menuNote"></p>
       </div>
@@ -117,7 +129,9 @@
     <!-- ===== GALLERY ===== -->
     <section id="gallery" class="gallery section" aria-labelledby="gallery-title">
       <div class="section-head reveal">
+        <p class="eyebrow">The gallery</p>
         <h2 id="gallery-title" class="section-title">From the oven</h2>
+        <p class="section-note" id="galleryNote">Real photography is on its way — here's a warm preview of what comes out of the kitchen.</p>
       </div>
       <div class="gallery-grid" id="galleryGrid"></div>
     </section>
@@ -125,6 +139,7 @@
     <!-- ===== WATCH US BAKE (optional) ===== -->
     <section id="social" class="social section" aria-labelledby="social-title" hidden>
       <div class="section-head reveal">
+        <p class="eyebrow on-dark">Behind the scenes</p>
         <h2 id="social-title" class="section-title" data-default="Watch us bake">Watch us bake</h2>
         <p class="section-note" id="socialBlurb"></p>
       </div>

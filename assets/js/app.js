@@ -68,16 +68,17 @@ function applyMenu() {
   if (m.note) $('#menuNote').textContent = m.note;
   const wrap = $('#menuCats');
   (m.categories || []).forEach((cat) => {
-    const items = (cat.items || []).map((it) =>
-      el('li', { class: 'menu-card' }, [
-        el('div', { class: 'menu-card-top' }, [
-          el('h4', { text: it.name }),
-          it.price ? el('span', { class: 'price', text: it.price }) : null,
-        ]),
+    const items = (cat.items || []).map((it) => {
+      const priceEl = it.price === 'request'
+        ? el('span', { class: 'price price-request', text: 'On request' })
+        : (it.price ? el('span', { class: 'price', text: it.price, 'aria-label': it.price.length + ' of 3 price level' }) : null);
+      return el('li', { class: 'menu-card' + (it.featured ? ' is-featured' : '') }, [
+        it.badge ? el('span', { class: 'menu-badge', text: it.badge }) : null,
+        el('div', { class: 'menu-card-top' }, [el('h4', { text: it.name }), priceEl]),
         it.desc ? el('p', { text: it.desc }) : null,
         el('a', { class: 'req-link', href: '#order', 'data-item': it.name, text: 'Request this' }),
-      ])
-    );
+      ]);
+    });
     wrap.append(el('div', { class: 'menu-cat reveal' }, [
       el('h3', { class: 'menu-cat-name', text: cat.name }),
       el('ul', { class: 'menu-items' }, items),
@@ -292,8 +293,31 @@ function wireNav() {
   document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target) && !toggle.contains(e.target)) close(); });
 }
 
+/* ---------- craft band + hero pastry switcher ---------- */
+function applyCraft() {
+  const grid = $('#craftGrid'); if (!grid) return;
+  const items = C.craft || [];
+  if (!items.length) { const s = $('#craft'); if (s) s.remove(); return; }
+  items.forEach((c) => grid.append(el('li', { class: 'craft-item reveal' }, [
+    el('h3', { class: 'craft-title', text: c.title }),
+    el('p', { text: c.body }),
+  ])));
+}
+function wireSwitcher() {
+  const sw = $('#heroSwitch'); if (!sw) return;
+  const btns = $$('.hero-switch__btn', sw);
+  let saved = 'croissant'; try { saved = localStorage.getItem('pnc_hero_shape') || 'croissant'; } catch (e) {}
+  const setOn = (shape) => btns.forEach((b) => { const on = b.dataset.shape === shape; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+  setOn(saved);
+  btns.forEach((b) => b.addEventListener('click', () => {
+    const shape = b.dataset.shape; setOn(shape);
+    if (window.__setHeroPastry) window.__setHeroPastry(shape);
+    else { try { localStorage.setItem('pnc_hero_shape', shape); } catch (e) {} }
+  }));
+}
+
 function boot() {
-  try { applyBrand(); applyStory(); applyMenu(); applyGallery(); applySocial(); applyOrder(); applyVisit(); applyFooter(); wireNav(); wireScroll(); }
+  try { applyBrand(); applyStory(); applyCraft(); applyMenu(); applyGallery(); applySocial(); applyOrder(); applyVisit(); applyFooter(); wireNav(); wireSwitcher(); wireScroll(); }
   catch (err) { console.warn('Plume & Crumb: content render issue', err); }
   // the 3D hero is purely decorative; if it can't run, the static image shows.
   try { initHero(); } catch (err) { console.warn('Plume & Crumb: 3D hero unavailable, using static fallback', err); document.querySelector('.backdrop').classList.add('is-static'); }

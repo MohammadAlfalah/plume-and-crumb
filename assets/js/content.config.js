@@ -40,28 +40,38 @@ window.PNC = {
     pullQuote: "Folded by hand, one layer at a time.",
   },
 
+  // A few craftsmanship cues. Honest, brand-voice placeholders — edit freely.
+  craft: [
+    { title: "Laminated by hand", body: "Every croissant is folded, rested, and shaped by hand — never machine-rolled, never frozen." },
+    { title: "Baked fresh each morning", body: "We bake in small numbers daily. When a tray's gone, it's gone — so what's in the case is always fresh." },
+    { title: "Made to order", body: "Cakes and larger orders are custom. Tell us the occasion and we build it around you." },
+  ],
+
   menu: {
-    note: "Everything is made to order. Pricing on request — tell us what you have in mind.",
+    // `price`: "$" / "$$" / "$$$" shows a discreet price-level dot. Use "request" for
+    //  custom items so the card reads "Pricing on request" instead. `badge` adds a small
+    //  label (Signature / Seasonal / Best seller / Custom …). `featured` highlights the card.
+    note: "Everything is made fresh, in small batches — most mornings sell out. Pricing is on request, so tell us what you have in mind.",
     categories: [
       {
         name: "Viennoiserie",
         items: [
-          { id: "croissant", name: "Butter Croissant", desc: "Forty-eight hours, twenty-seven layers, one perfect shatter.", price: "$" },
+          { id: "croissant", name: "Butter Croissant", desc: "Forty-eight hours, twenty-seven layers, one perfect shatter.", price: "$", badge: "Signature", featured: true },
           { id: "pain-au-chocolat", name: "Pain au Chocolat", desc: "Two batons of dark chocolate in laminated dough.", price: "$" },
-          { id: "kouign-amann", name: "Kouign-Amann", desc: "Caramelized, crackly, faintly salty. The baker's favorite.", price: "$" },
+          { id: "kouign-amann", name: "Kouign-Amann", desc: "Caramelized, crackly, faintly salty. The baker's favorite.", price: "$", badge: "Best seller" },
         ],
       },
       {
         name: "Cakes",
         items: [
-          { id: "celebration-cake", name: "Celebration Cake", desc: "Custom layers for birthdays, weddings, and good news.", price: "$$$" },
+          { id: "celebration-cake", name: "Celebration Cake", desc: "Custom layers for birthdays, weddings, and good news.", price: "request", badge: "Custom", featured: true },
           { id: "olive-oil-cake", name: "Olive Oil & Citrus", desc: "Tender, fragrant, not too sweet. Keeps beautifully.", price: "$$" },
         ],
       },
       {
         name: "Tarts",
         items: [
-          { id: "fruit-tart", name: "Seasonal Fruit Tart", desc: "Vanilla custard and whatever's ripe this week.", price: "$$" },
+          { id: "fruit-tart", name: "Seasonal Fruit Tart", desc: "Vanilla custard and whatever's ripe this week.", price: "$$", badge: "Seasonal" },
           { id: "lemon-tart", name: "Lemon Tart", desc: "Sharp, silky curd in a sablé shell.", price: "$$" },
           { id: "ganache-tart", name: "Dark Chocolate Ganache", desc: "Single-origin chocolate, flaky sea salt.", price: "$$" },
         ],
@@ -69,8 +79,8 @@ window.PNC = {
       {
         name: "Seasonal",
         items: [
-          { id: "morning-bun", name: "Morning Bun", desc: "Croissant dough, orange sugar, made for coffee.", price: "$" },
-          { id: "galette", name: "Stone-Fruit Galette", desc: "Rustic, jammy, only when the fruit is right.", price: "$$" },
+          { id: "morning-bun", name: "Morning Bun", desc: "Croissant dough, orange sugar, made for coffee.", price: "$", badge: "Weekends" },
+          { id: "galette", name: "Stone-Fruit Galette", desc: "Rustic, jammy, only when the fruit is right.", price: "$$", badge: "Seasonal" },
         ],
       },
     ],
@@ -90,7 +100,7 @@ window.PNC = {
   social: {
     enabled: true,                 // set to false to remove the whole "Watch us bake" section
     heading: "Watch us bake",
-    blurb: "We film the good parts — the lamination, the rise, the first cut. Come see how it's made.",
+    blurb: "We film the good parts — the slow fold of the lamination, the rise, the first warm cut. Follow along to watch each batch come together.",
     instagram: { handle: "@plumeandcrumb", url: "https://instagram.com/", poster: "" },
     tiktok: { handle: "@plumeandcrumb", url: "https://www.tiktok.com/", poster: "" },
   },
