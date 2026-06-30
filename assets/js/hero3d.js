@@ -191,6 +191,28 @@ function crustBump(THREE) {
   x.putImageData(img, 0, 0);
   const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(4, 4); return t;
 }
+/* TRUE normal map, derived from a sharpened flaky-crust height field. This is the
+   big realism lever: it gives the surface real per-pixel relief so light catches
+   every laminated layer, blister, and flake — instead of a smooth painted shell. */
+function crustNormal(THREE) {
+  const s = 512;
+  const Hf = (i, j) => {
+    const h = fbm(i / 26, j / 26, 1.7) * 0.6 + fbm(i / 9, j / 9, 5.3) * 0.3 + fbm(i / 3.4, j / 3.4, 9.1) * 0.2;
+    return Math.pow((h + 1) / 2, 1.45);   // 0..1, sharpen the flakes
+  };
+  const c = document.createElement('canvas'); c.width = c.height = s;
+  const x = c.getContext('2d'), img = x.createImageData(s, s), d = img.data, str = 2.6;
+  for (let j = 0; j < s; j++) for (let i = 0; i < s; i++) {
+    const hL = Hf((i - 1 + s) % s, j), hR = Hf((i + 1) % s, j), hD = Hf(i, (j - 1 + s) % s), hU = Hf(i, (j + 1) % s);
+    let nx = (hL - hR) * str, ny = (hD - hU) * str, nz = 1;
+    const inv = 1 / Math.hypot(nx, ny, nz); nx *= inv; ny *= inv; nz *= inv;
+    const k = (j * s + i) * 4;
+    d[k] = (nx * 0.5 + 0.5) * 255; d[k + 1] = (ny * 0.5 + 0.5) * 255; d[k + 2] = (nz * 0.5 + 0.5) * 255; d[k + 3] = 255;
+  }
+  x.putImageData(img, 0, 0);
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 3); return t;
+}
+
 function softSprite(THREE) {
   const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d');
   const g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
@@ -277,13 +299,13 @@ export async function initHero() {
   const pastry = new THREE.Group(); scene.add(pastry);
   const lowQ = reduced || mobile || saveData;
   const mat = new THREE.MeshPhysicalMaterial({
-    vertexColors: true, roughness: 0.88, metalness: 0.0,
+    vertexColors: true, roughness: 0.8, metalness: 0.0,
     roughnessMap: crustRoughness(THREE),
-    bumpMap: crustBump(THREE), bumpScale: 0.05,
-    clearcoat: 0.16, clearcoatRoughness: 0.7,
-    sheen: 0.3, sheenColor: new THREE.Color(0xF1D2A0), sheenRoughness: 0.85,
+    normalMap: crustNormal(THREE), normalScale: new THREE.Vector2(0.85, 0.85),   // real per-pixel crust relief
+    clearcoat: 0.18, clearcoatRoughness: 0.55,
+    sheen: 0.38, sheenColor: new THREE.Color(0xF1D2A0), sheenRoughness: 0.78,
     emissive: new THREE.Color(0x3A1F0C), emissiveIntensity: 0.05,
-    envMapIntensity: 0.85,
+    envMapIntensity: 1.1,
   });
   const SHAPES = {
     croissant: { geo: () => buildCroissant(THREE, lowQ), tilt: [-0.34, 0.20, 0.08] },
@@ -393,7 +415,7 @@ export async function initHero() {
     mesh.rotation.y += dt * 0.06;                              // very gentle turn
     key.color.copy(keyBase).lerp(keyGold, warm);
     mat.emissiveIntensity = 0.05 + warm * 0.06;
-    mat.envMapIntensity = 0.85 + warm * 0.2;
+    mat.envMapIntensity = 1.1 + warm * 0.2;
     if (bloom) bloom.strength = 0.16 + warm * 0.1;
 
     // contact shadow tracks + softens with the float height + scroll
