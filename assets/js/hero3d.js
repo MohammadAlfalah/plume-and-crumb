@@ -321,45 +321,43 @@ export async function initHero() {
     emissive: new THREE.Color(0x3A1F0C), emissiveIntensity: 0.05,
     envMapIntensity: 1.1,
   });
-  // placeholder procedural croissant — shows for the instant before the real model streams in
-  const mesh = new THREE.Mesh(organicWarp(THREE, buildCroissant(THREE, lowQ)), mat);
-  mesh.rotation.set(-0.34, 0.20, 0.08); pastry.add(mesh);
-  let activeObj = mesh;
-
-  // three REAL photoscanned models (Poly Haven, CC0): a croissant + two cakes the shop sells
-  const MODELS = {
-    carrot: { path: 'assets/models/carrot_cake/carrot_cake_1k.gltf', scale: 3.1, tilt: [-0.16, 0.45, 0] },
+  // ---- the hero: a cheerful TOON-SHADED layer cake. Stylized on purpose — it reads as a
+  //      crafted illustration, not a failed photo, so it dodges the uncanny "old-game" look.
+  //      Built procedurally with cel shading + dark inverted-hull outlines. No model to load. ----
+  const cakeRamp = (() => {                       // 4-step neutral ramp → crisp cartoon banding
+    const c = document.createElement('canvas'); c.width = 4; c.height = 1; const x = c.getContext('2d');
+    ['#6a6a6a', '#9e9e9e', '#cfcfcf', '#ffffff'].forEach((s, i) => { x.fillStyle = s; x.fillRect(i, 0, 1, 1); });
+    const t = new THREE.CanvasTexture(c); t.minFilter = t.magFilter = THREE.NearestFilter; t.generateMipmaps = false; return t;
+  })();
+  const toon = (hex) => new THREE.MeshToonMaterial({ color: hex, gradientMap: cakeRamp });
+  const outlineMat = new THREE.MeshBasicMaterial({ color: 0x35200F, side: THREE.BackSide });   // cartoon edge
+  const SPONGE = 0xE7C39A, FROST = 0xFBEFDC, BERRY = 0xC4424F, GOLD = 0xD98E3F, LEAF = 0x9CAE84, STEM = 0x6B4A2A;
+  const cake = new THREE.Group();
+  const part = (geo, material, y, outline = true, oScale = 1.06) => {       // mesh + optional inverted-hull outline
+    const m = new THREE.Mesh(geo, material); m.position.y = y; cake.add(m);
+    if (outline) { const o = new THREE.Mesh(geo, outlineMat); o.position.y = y; o.scale.setScalar(oScale); cake.add(o); }
+    return m;
   };
-  const loaded = {};
-  let current = 'carrot';
-  function showOnly(obj) { activeObj = obj || mesh; mesh.visible = (obj === mesh); for (const k in loaded) loaded[k].visible = (loaded[k] === obj); }
-  let GLTFLoaderP = null;
-  function loadModel(key, then) {
-    if (loaded[key]) return then(loaded[key]);
-    if (saveData) return then(null);   // honor data-saver: stay on the procedural placeholder
-    GLTFLoaderP = GLTFLoaderP || import('three/addons/loaders/GLTFLoader.js');
-    GLTFLoaderP.then(({ GLTFLoader }) => {
-      const cfg = MODELS[key];
-      new GLTFLoader().load(cfg.path, (gltf) => {
-        const m = gltf.scene;
-        let box = new THREE.Box3().setFromObject(m);
-        const sz = box.getSize(new THREE.Vector3()), maxDim = Math.max(sz.x, sz.y, sz.z) || 1;
-        m.scale.setScalar(cfg.scale / maxDim);
-        box = new THREE.Box3().setFromObject(m);
-        m.position.sub(box.getCenter(new THREE.Vector3()));   // center on origin
-        m.traverse((o) => { if (o.isMesh && o.material) o.material.envMapIntensity = 1.0; });
-        const g = new THREE.Group(); g.add(m); g.rotation.set(cfg.tilt[0], cfg.tilt[1], cfg.tilt[2]);
-        g.visible = false; pastry.add(g); loaded[key] = g; then(g);
-      }, undefined, () => then(null));
-    }).catch(() => then(null));
+  part(new THREE.CylinderGeometry(1.35, 1.42, 0.92, 64), toon(SPONGE), -0.55);   // bottom tier (sponge)
+  part(new THREE.CylinderGeometry(1.46, 1.46, 0.30, 64), toon(FROST), 0.00);     // bottom frosting ledge
+  part(new THREE.CylinderGeometry(0.92, 0.98, 0.78, 64), toon(SPONGE), 0.55);    // top tier (sponge)
+  part(new THREE.CylinderGeometry(1.02, 1.02, 0.26, 64), toon(FROST), 1.00);     // top frosting
+  part(new THREE.SphereGeometry(0.20, 32, 24), toon(BERRY), 1.32);               // cherry on top
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.22, 8), toon(STEM));
+  stem.position.set(0.05, 1.46, 0); stem.rotation.z = -0.32; cake.add(stem);     // cherry stem
+  const sprinkleCols = [BERRY, GOLD, LEAF, 0xFFFFFF, 0xE89AB0];                   // sprinkles around the ledge
+  const ring = new THREE.CylinderGeometry(0.028, 0.028, 0.14, 6);
+  for (let i = 0; i < 16; i++) {
+    const a = (i / 16) * Math.PI * 2;
+    const s = new THREE.Mesh(ring, toon(sprinkleCols[i % sprinkleCols.length]));
+    s.position.set(Math.cos(a) * 1.2, 0.12, Math.sin(a) * 1.2);
+    s.rotation.set(Math.PI / 2, 0, a + 0.6); cake.add(s);
   }
-  function setShape(key) {
-    current = MODELS[key] ? key : 'carrot';
-    if (loaded[current]) { showOnly(loaded[current]); render(); return; }
-    showOnly(null);   // just the warm wash + motes while the model streams in
-    loadModel(current, (g) => { if (g && current === key) { showOnly(g); render(); } });
-  }
-  window.__setHeroPastry = setShape;
+  cake.position.y = -0.26;   // recenter the stack on the origin
+  cake.scale.setScalar(1.05);
+  cake.rotation.y = -0.35;   // friendly 3/4 view
+  pastry.add(cake);
+  let activeObj = cake;
 
   // ---- light beams (fake volumetrics; glow under bloom) ----
   const beams = [];
@@ -477,9 +475,6 @@ export async function initHero() {
   function loop() { if (!running) return; frame(); rafId = requestAnimationFrame(loop); }
   document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running && !reduced) { clock.getDelta(); loop(); } });
 
-  if (reduced) { mesh.rotation.x -= 0.05; render(); } else loop();
-
-  // load the initial real model (the procedural croissant bridges the gap until it arrives)
-  setShape(current);
+  if (reduced) { cake.rotation.x -= 0.05; render(); } else loop();
   return true;
 }
