@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-label="A warm, softly lit laminated pastry floating in golden light.">
+  <defs>
+    <radialGradient id="wash" cx="62%" cy="34%" r="85%">
+      <stop offset="0" stop-color="#FFF7E8"/>
+      <stop offset="42%" stop-color="#FBF4E9"/>
+      <stop offset="100%" stop-color="#D98E3F"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="46%" r="55%">
+      <stop offset="0" stop-color="#FFE6B8" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#FFE6B8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="pastry" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F6CB85"/>
+      <stop offset="0.55" stop-color="#D98E3F"/>
+      <stop offset="1" stop-color="#8A4B1E"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFF7E8" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FFEEC8" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#FFF7E8" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#wash)"/>
+
+  <!-- light beams -->
+  <g opacity="0.5">
+    <rect x="560" y="-120" width="150" height="1240" fill="url(#beam)" transform="rotate(14 635 500)"/>
+    <rect x="940" y="-120" width="120" height="1240" fill="url(#beam)" transform="rotate(-10 1000 500)"/>
+  </g>
+
+  <!-- glow behind the pastry -->
+  <ellipse cx="800" cy="470" rx="430" ry="360" fill="url(#glow)"/>
+
+  <!-- the pastry: a soft laminated form -->
+  <g transform="translate(800 470)">
+    <ellipse cx="14" cy="40" rx="240" ry="70" fill="#8A4B1E" opacity="0.18"/>
+    <path d="M-250 0 C-250 -150 -120 -230 0 -230 C120 -230 250 -150 250 0 C250 150 120 230 0 230 C-120 230 -250 150 -250 0 Z" fill="url(#pastry)"/>
+    <!-- lamination bands -->
+    <g fill="none" stroke="#FFF1D6" stroke-opacity="0.55" stroke-width="6" stroke-linecap="round">
+      <path d="M-210 -70 C-110 -110 110 -110 210 -70"/>
+      <path d="M-232 -10 C-120 -44 120 -44 232 -10"/>
+      <path d="M-222 50 C-110 18 110 18 222 50"/>
+      <path d="M-188 108 C-96 82 96 82 188 108"/>
+    </g>
+    <!-- rim highlight -->
+    <path d="M-250 0 C-250 -150 -120 -230 0 -230 C-90 -210 -180 -150 -200 -30 Z" fill="#FFF6E6" opacity="0.5"/>
+  </g>
+
+  <!-- drifting motes -->
+  <g>
+    <circle cx="470" cy="320" r="6" fill="#FFF6E6" opacity="0.9"/>
+    <circle cx="1180" cy="280" r="5" fill="#FFF6E6" opacity="0.8"/>
+    <circle cx="1090" cy="640" r="7" fill="#B23A48" opacity="0.7"/>
+    <circle cx="540" cy="700" r="5" fill="#4A2E18" opacity="0.7"/>
+    <circle cx="360" cy="520" r="4" fill="#FFF6E6" opacity="0.8"/>
+    <circle cx="1240" cy="470" r="5" fill="#FFF6E6" opacity="0.7"/>
+  </g>
+</svg>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plume &amp; Crumb — Artisan Pastry</title>
+  <meta name="description" content="Plume &amp; Crumb — a small-batch artisan pastry kitchen. Croissants, cakes, and tarts made by hand. Request a custom order." />
+  <meta name="theme-color" content="#FBF4E9" />
+
+  <!-- Social / OG -->
+  <meta property="og:title" content="Plume &amp; Crumb — Artisan Pastry" />
+  <meta property="og:description" content="Small-batch croissants, cakes, and tarts, made by hand. Request a custom order." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://example.com/" />
+  <meta property="og:image" content="assets/img/hero-fallback.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Favicon: a little plume mark -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FBF4E9'/%3E%3Cpath d='M16 5c5 3 7 8 4 13-1 2-3 4-4 8-1-4-3-6-4-8-3-5-1-10 4-13z' fill='%23D98E3F'/%3E%3Cpath d='M16 9v15' stroke='%23A85F22' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E" />
+
+  <!-- Fonts: Fraunces (display) + Inter (body). Instant fallback via the CSS stack. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="assets/css/styles.css" />
+
+  <!-- Three.js as ES modules, no build step. Pinned version. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <link rel="modulepreload" href="https://unpkg.com/three@0.160.0/build/three.module.js" />
+
+  <!-- Content config: THE file the owner edits. Loaded first, sets window.PNC. -->
+  <script src="assets/js/content.config.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Fixed 3D backdrop (decorative). A static image sits underneath for no-WebGL / reduced-motion. -->
+  <div class="backdrop" aria-hidden="true">
+    <img class="backdrop-fallback" id="heroFallback" src="assets/img/hero-fallback.svg" alt="" />
+    <canvas id="bgCanvas"></canvas>
+  </div>
+
+  <!-- Sticky section dot-nav: real anchor links (work with JS off, keyboard-focusable) -->
+  <nav class="dotnav" aria-label="Sections">
+    <a href="#hero" data-label="Home"><span></span></a>
+    <a href="#story" data-label="Story"><span></span></a>
+    <a href="#menu" data-label="Menu"><span></span></a>
+    <a href="#gallery" data-label="Gallery"><span></span></a>
+    <a href="#social" data-label="Watch"><span></span></a>
+    <a href="#order" data-label="Order"><span></span></a>
+    <a href="#visit" data-label="Visit"><span></span></a>
+  </nav>
+
+  <header class="topbar">
+    <a class="wordmark" href="#hero" id="wordmark">Plume &amp; Crumb</a>
+    <a class="topbar-cta" href="#order">Request an order</a>
+  </header>
+
+  <main id="main">
+    <!-- ===== HERO ===== -->
+    <section id="hero" class="hero" aria-labelledby="hero-title">
+      <div class="hero-inner">
+        <p class="eyebrow" id="heroDescriptor">Artisan Pastry</p>
+        <h1 id="hero-title" class="hero-title">Baked light.<br />Served warm.</h1>
+        <p class="hero-sub" id="heroSub">A small-batch pastry kitchen. Croissants, cakes, and tarts, made by hand.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" id="heroCta" href="#order">Request a custom cake</a>
+          <a class="btn btn-ghost" href="#menu">See the menu</a>
+        </div>
+      </div>
+      <p class="hero-caption" id="heroCaption" aria-hidden="true">drag to orbit · scroll to explore</p>
+      <a class="scroll-cue" href="#story" aria-label="Scroll to story"><span></span></a>
+    </section>
+
+    <!-- ===== STORY ===== -->
+    <section id="story" class="story section" aria-labelledby="story-title">
+      <div class="story-grid">
+        <div class="story-copy reveal">
+          <h2 id="story-title" class="section-title">Made by hand, in small batches</h2>
+          <div id="storyBody"></div>
+        </div>
+        <blockquote class="pull-quote reveal" id="pullQuote">Folded by hand, one layer at a time.</blockquote>
+      </div>
+    </section>
+
+    <!-- ===== MENU ===== -->
+    <section id="menu" class="menu section" aria-labelledby="menu-title">
+      <div class="section-head reveal">
+        <h2 id="menu-title" class="section-title">The case</h2>
+        <p class="section-note" id="menuNote"></p>
+      </div>
+      <div class="menu-cats" id="menuCats"></div>
+    </section>
+
+    <!-- ===== GALLERY ===== -->
+    <section id="gallery" class="gallery section" aria-labelledby="gallery-title">
+      <div class="section-head reveal">
+        <h2 id="gallery-title" class="section-title">From the oven</h2>
+      </div>
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </section>
+
+    <!-- ===== WATCH US BAKE (optional) ===== -->
+    <section id="social" class="social section" aria-labelledby="social-title" hidden>
+      <div class="section-head reveal">
+        <h2 id="social-title" class="section-title" data-default="Watch us bake">Watch us bake</h2>
+        <p class="section-note" id="socialBlurb"></p>
+      </div>
+      <div class="social-grid" id="socialGrid"></div>
+    </section>
+
+    <!-- ===== ORDER REQUEST (in HTML so it works even with no JS) ===== -->
+    <section id="order" class="order section" aria-labelledby="order-title">
+      <div class="order-wrap reveal">
+        <div class="section-head">
+          <h2 id="order-title" class="section-title">Request a custom order</h2>
+          <p class="section-note" id="orderBlurb">Tell us about your occasion and we'll get back to you with options and pricing. This is a request, not a checkout — nothing is charged here.</p>
+        </div>
+
+        <form id="orderForm" class="order-form" method="post" enctype="text/plain" action="mailto:hello@plumeandcrumb.example" novalidate>
+          <!-- honeypot: hidden from people, catches bots -->
+          <div class="hp" aria-hidden="true"><label>Leave this empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label></div>
+
+          <div class="field">
+            <label for="f-name">Your name <span class="req">*</span></label>
+            <input id="f-name" name="name" type="text" required autocomplete="name" />
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="f-email">Email <span class="req">*</span></label>
+              <input id="f-email" name="email" type="email" required autocomplete="email" />
+            </div>
+            <div class="field">
+              <label for="f-phone">Phone</label>
+              <input id="f-phone" name="phone" type="tel" autocomplete="tel" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="f-occasion">Occasion</label>
+              <select id="f-occasion" name="occasion"><option value="">Choose…</option></select>
+            </div>
+            <div class="field">
+              <label for="f-date">Date wanted</label>
+              <input id="f-date" name="date" type="date" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="f-servings">Servings / size</label>
+              <input id="f-servings" name="servings" type="text" placeholder="e.g. serves 12, or 2 dozen" />
+            </div>
+            <div class="field">
+              <label for="f-budget">Budget range</label>
+              <select id="f-budget" name="budget"><option value="">Choose…</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-flavors">Flavors / style</label>
+            <input id="f-flavors" name="flavors" type="text" placeholder="e.g. pistachio &amp; raspberry, not too sweet" />
+          </div>
+          <div class="field">
+            <label for="f-dietary">Dietary notes</label>
+            <input id="f-dietary" name="dietary" type="text" placeholder="allergies, vegan, gluten-free…" />
+          </div>
+          <div class="field">
+            <label for="f-message">Anything else?</label>
+            <textarea id="f-message" name="message" rows="4"></textarea>
+          </div>
+
+          <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary btn-block" type="submit" id="formSubmit">Send request</button>
+          <p class="form-fineprint" id="formFineprint">Made to order · pricing on request · we'll reply by email.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===== VISIT ===== -->
+    <section id="visit" class="visit section" aria-labelledby="visit-title">
+      <div class="visit-grid">
+        <div class="visit-info reveal">
+          <h2 id="visit-title" class="section-title">Visit</h2>
+          <p class="section-note" id="visitBlurb"></p>
+          <table class="hours" id="hoursTable"><caption class="sr-only">Opening hours</caption><tbody></tbody></table>
+          <address class="visit-address" id="visitAddress"></address>
+          <p class="visit-links">
+            <a class="btn btn-ghost" id="mapsLink" href="#" target="_blank" rel="noopener">Open in Maps</a>
+            <a class="btn btn-ghost" id="phoneLink" href="#">Call us</a>
+          </p>
+        </div>
+        <div class="visit-map reveal">
+          <button class="map-facade" id="mapFacade" type="button" aria-label="Load map">
+            <span class="map-facade-pin">📍</span>
+            <span>Tap to load map</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <a class="wordmark wordmark-sm" href="#hero">Plume &amp; Crumb</a>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="#menu">Menu</a><a href="#order">Order</a><a href="#visit">Visit</a>
+        <a id="footIg" href="#" target="_blank" rel="noopener">Instagram</a>
+        <a id="footTt" href="#" target="_blank" rel="noopener">TikTok</a>
+      </nav>
+      <p class="footer-meta"><span id="footCredit">Baked with care.</span> · <span id="footYear"></span> Plume &amp; Crumb</p>
+      <p class="footer-rebrand">Make it yours → edit <code>assets/js/content.config.js</code></p>
+      <a class="to-top" href="#hero" aria-label="Back to top">↑</a>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript">
+      <strong>Plume &amp; Crumb — Artisan Pastry.</strong>
+      Croissants, cakes, and tarts, made by hand. To request a custom order, email
+      <a href="mailto:hello@plumeandcrumb.example">hello@plumeandcrumb.example</a> or call (555) 123-4567.
+      (Enable JavaScript for the full experience.)
+    </div>
+  </noscript>
+
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
