@@ -49,6 +49,8 @@ function applyBrand() {
   if (b.tagline) $('#hero-title').innerHTML = esc(b.tagline).replace(/\.\s+/, '.<br>');
   const h = C.hero || {};
   if (h.cta) { const cta = $('#heroCta'); cta.textContent = h.cta.label || cta.textContent; cta.href = h.cta.href || '#order'; }
+  if (h.caption) $('#heroCaption').textContent = h.caption;
+  if (window.matchMedia('(pointer: coarse)').matches) $('#heroCaption').textContent = 'scroll to explore'; // no drag-orbit on touch
   if (h.fallbackImage) $('#heroFallback').src = h.fallbackImage;
 }
 

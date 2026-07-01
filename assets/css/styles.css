@@ -70,6 +70,11 @@ main { position: relative; z-index: 1; }
 .section-head { max-width: 720px; margin: 0 auto clamp(36px, 6vh, 64px); text-align: center; }
 .section-note { font-size: 1.05rem; color: color-mix(in srgb, var(--ink) 78%, transparent); margin: 0; }
 .eyebrow { text-transform: uppercase; letter-spacing: .28em; font-size: .72rem; font-weight: 600; color: var(--crust-deep); margin: 0 0 1rem; }
+/* naked text that can sit over the floating cake (section intros + craft band) gets a soft halo so it always reads */
+.section-head .section-title, .section-head .section-note, .section-head .eyebrow:not(.on-dark),
+.craft-item .craft-title, .craft-item p {
+  text-shadow: 0 1px 16px color-mix(in srgb, var(--cream) 76%, transparent);
+}
 
 .panel {
   background: color-mix(in srgb, var(--parchment) 86%, transparent);
