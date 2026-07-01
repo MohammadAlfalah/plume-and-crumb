@@ -146,7 +146,7 @@ body.nav-open { overflow: hidden; }
 @media (max-width: 560px) { .section { padding: 60px var(--pad); } .hero-actions { width: 100%; } .hero-actions .btn { flex: 1 1 100%; } }
 
 /* ============================ Hero ============================ */
-.hero { min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px var(--pad) 80px; pointer-events: none; }
+.hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px var(--pad) 80px; pointer-events: none; }
 /* Empty hero areas let the mouse fall through to the 3D (drag-to-orbit); text + buttons stay clickable. */
 .hero-inner, .hero a, .hero .btn, .hero .scroll-cue { pointer-events: auto; }
 .hero-inner { max-width: 760px; position: relative; }
@@ -165,6 +165,15 @@ body.nav-open { overflow: hidden; }
 .scroll-cue { position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%); width: 26px; height: 42px; border: 2px solid color-mix(in srgb, var(--ink) 40%, transparent); border-radius: 14px; }
 .scroll-cue span { position: absolute; top: 8px; left: 50%; width: 4px; height: 8px; background: var(--crust-deep); border-radius: 2px; transform: translateX(-50%); animation: scrolldot 1.8s var(--ease) infinite; }
 @keyframes scrolldot { 0% { opacity: 0; transform: translate(-50%, 0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, 14px); } }
+/* the mouse scroll-cue is a PC affordance — hide it on touch devices (no mouse) */
+@media (hover: none), (max-width: 760px) { .scroll-cue { display: none; } }
+/* short viewports: shrink the hero so the copy + cue fit without crowding */
+@media (min-width: 761px) and (max-height: 780px) {
+  .hero { padding-top: 84px; padding-bottom: 58px; }
+  .hero-title { font-size: clamp(2.2rem, 7.4vw, 4.4rem); }
+  .hero-sub { margin-bottom: 1.4em; }
+  .scroll-cue { bottom: 20px; }
+}
 
 /* ============================ Story ============================ */
 .story-grid { max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: 1.2fr .8fr; gap: clamp(28px, 5vw, 72px); align-items: center; }
