@@ -152,11 +152,11 @@ body.nav-open { overflow: hidden; }
 .hero-inner { max-width: 760px; position: relative; }
 .hero-inner::before {   /* soft scrim so the copy always reads over the floating cake */
   content: ""; position: absolute; z-index: -1; inset: -14% -18%; pointer-events: none;
-  background: radial-gradient(62% 66% at 50% 50%,
-    color-mix(in srgb, var(--cream) 84%, transparent) 0%,
-    color-mix(in srgb, var(--cream) 58%, transparent) 48%,
-    transparent 80%);
-  filter: blur(12px);
+  background: radial-gradient(58% 62% at 50% 49%,
+    color-mix(in srgb, var(--cream) 60%, transparent) 0%,
+    color-mix(in srgb, var(--cream) 34%, transparent) 50%,
+    transparent 78%);
+  filter: blur(14px);
 }
 .hero-title { font-size: clamp(2.4rem, 10vw, 7rem); margin: 0 0 .25em; letter-spacing: -.02em; text-shadow: 0 2px 30px color-mix(in srgb, var(--cream) 70%, transparent); }
 .hero-sub { font-size: clamp(1.05rem, 2.4vw, 1.35rem); max-width: 30ch; margin: 0 auto 2em; color: var(--ink); text-shadow: 0 1px 18px color-mix(in srgb, var(--cream) 76%, transparent); }

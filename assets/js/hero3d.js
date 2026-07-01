@@ -354,7 +354,7 @@ export async function initHero() {
     s.rotation.set(Math.PI / 2, 0, a + 0.6); cake.add(s);
   }
   cake.position.y = -0.34;   // gentle float, centered behind the copy
-  cake.scale.setScalar(0.58);   // a floating accent, not a wall behind the copy
+  cake.scale.setScalar(0.68);   // a floating accent (kept clear of the copy by a light scrim)
   cake.rotation.y = -0.35;   // friendly 3/4 view
   pastry.add(cake);
   let activeObj = cake;
