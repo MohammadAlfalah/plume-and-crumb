@@ -149,9 +149,17 @@ body.nav-open { overflow: hidden; }
 .hero { min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px var(--pad) 80px; pointer-events: none; }
 /* Empty hero areas let the mouse fall through to the 3D (drag-to-orbit); text + buttons stay clickable. */
 .hero-inner, .hero a, .hero .btn, .hero .scroll-cue { pointer-events: auto; }
-.hero-inner { max-width: 760px; }
+.hero-inner { max-width: 760px; position: relative; }
+.hero-inner::before {   /* soft scrim so the copy always reads over the floating cake */
+  content: ""; position: absolute; z-index: -1; inset: -14% -18%; pointer-events: none;
+  background: radial-gradient(62% 66% at 50% 50%,
+    color-mix(in srgb, var(--cream) 84%, transparent) 0%,
+    color-mix(in srgb, var(--cream) 58%, transparent) 48%,
+    transparent 80%);
+  filter: blur(12px);
+}
 .hero-title { font-size: clamp(2.4rem, 10vw, 7rem); margin: 0 0 .25em; letter-spacing: -.02em; text-shadow: 0 2px 30px color-mix(in srgb, var(--cream) 70%, transparent); }
-.hero-sub { font-size: clamp(1.05rem, 2.4vw, 1.35rem); max-width: 30ch; margin: 0 auto 2em; color: color-mix(in srgb, var(--ink) 82%, transparent); }
+.hero-sub { font-size: clamp(1.05rem, 2.4vw, 1.35rem); max-width: 30ch; margin: 0 auto 2em; color: var(--ink); text-shadow: 0 1px 18px color-mix(in srgb, var(--cream) 76%, transparent); }
 .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 .hero-caption { position: absolute; bottom: 92px; left: 0; right: 0; text-align: center; font-size: .76rem; letter-spacing: .18em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 68%, transparent); margin: 0; }
 .scroll-cue { position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%); width: 26px; height: 42px; border: 2px solid color-mix(in srgb, var(--ink) 40%, transparent); border-radius: 14px; }
