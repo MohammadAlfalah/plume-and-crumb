@@ -419,7 +419,11 @@ export async function initHero() {
   // ---- scroll ----
   let scrollTarget = 0, scrollSmooth = 0;
   const readScroll = () => { const max = document.documentElement.scrollHeight - window.innerHeight; scrollTarget = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0; };
-  window.addEventListener('scroll', () => { readScroll(); updatePointer(); }, { passive: true });
+  // The cake is a HERO moment. As you scroll into the content it dissolves into the warm
+  // background wash, so section text never has to fight a busy 3D object behind it.
+  const fadeCanvas = () => { const f = Math.min(1, window.scrollY / ((window.innerHeight || 1) * 0.8)); canvas.style.opacity = (1 - f * 0.93).toFixed(3); };
+  window.addEventListener('scroll', () => { readScroll(); updatePointer(); fadeCanvas(); }, { passive: true });
+  canvas.style.transition = 'opacity .3s ease'; fadeCanvas();
   readScroll();
 
   // ---- resize ----
